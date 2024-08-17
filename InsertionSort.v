@@ -1,7 +1,7 @@
 From Coq Require Import Unicode.Utf8.
 
 Require Import Arith.
-Require Import Coq.Arith.PeanoNat.
+Require Import PeanoNat.
 Require Import Bool.
 Require Import List.
 Require Import Sorting.Permutation.
