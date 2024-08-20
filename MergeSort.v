@@ -43,3 +43,5 @@ Admitted.
 
 Compute sort [3; 1; 5; 2; 4; 6].
 
+(* Theorem sort_correct:  *)
+

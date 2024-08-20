@@ -13,7 +13,7 @@ match l with
 | h :: t => if i <=? h then i :: h :: t else h :: insert i t
 end.
 
-Compute insert 3 [1; 2; 5].
+
 
 Fixpoint sort (l: list nat) :=
 match l with
@@ -114,4 +114,71 @@ assert (Permutation (a :: (sort h)) (insert a (sort h))).
 assert (Permutation (a :: h) (a :: sort h)).
 { apply perm_skip. assumption. }
 apply (Permutation_trans H1 H0).
+Qed.
+
+
+Fixpoint insert_comparisions (i: nat) (l: list nat) :=
+match l with
+| nil => (i :: nil, 0)
+| h :: t => 
+    let (l', c) := insert_comparisions i t in
+    let l'' := if i <=? h then i :: h :: t else h :: l' in
+    (l'', c + 1)
+end.
+
+Compute insert_comparisions 3 [1; 2; 5].
+
+Lemma s_is_plus_one : ∀ n:nat, S n = n + 1.
+Proof.
+intros. induction n.
+ - reflexivity.
+ - simpl. rewrite <- IHn. reflexivity.
+Qed.
+
+
+Theorem inesrt_is_O_n: ∀ i l, snd (insert_comparisions i l) <= length l.
+Proof.
+  intros i l.
+  induction l.
+  { simpl. auto. }
+  simpl.
+  destruct (insert_comparisions i l).
+  simpl.
+  simpl in IHl.
+
+  (* 
+    IHl: n ≤ length l
+    goal: 1 + n ≤ S (length l)
+  *)
+  assert (n + 1 = S n).
+  { symmetry. apply s_is_plus_one. }
+  rewrite H.
+  apply le_n_S.
+  assumption.
+Qed.
+
+Fixpoint sort_iterations (l: list nat) :=
+match l with
+| nil => (nil, 0)
+| h :: t => 
+    let (l', c) := sort_iterations t in
+    (insert h l', c + 1)
+end.
+
+Compute sort_iterations [8; 7; 6; 5; 4; 3; 2; 1; 0].
+
+Theorem sort_iterations_is_O_n: ∀ l, snd (sort_iterations l) <= length l.
+Proof.
+  intros.
+  induction l.
+  { simpl. auto. }
+  simpl.
+  destruct (sort_iterations l).
+  simpl.
+  simpl in IHl.
+  assert (n + 1 = S n).
+  { symmetry. apply s_is_plus_one. }
+  rewrite H.
+  apply le_n_S.
+  assumption.
 Qed.
